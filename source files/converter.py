@@ -4,18 +4,25 @@ from openpyxl import load_workbook
 from collections import OrderedDict
 
 import json
+import os
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+WORKBOOK = os.path.join(HERE, "OWC_Text.xlsx")
+
+def main(workbook: str) -> None:
+    convert(workbook)
 
 
 def convert(workbook: str) -> None: # workbook is OWC-Text
     """ Convert the workbook to JSON-LD in SKOS format """
 
+    # load template and transform into ordered dict
+    with open("template.json", 'r') as file:
+        template = json.load(file)
     jsonld = OrderedDict()
-    parsed_template = json.load("template.json")
-    jsonld.update(parsed_template)
+    jsonld.update(template)
 
-    print(jsonld)
-    return jsonld
-
+    #
     wb = load_workbook(workbook)
     for ws in wb:
         for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, values_only=True):
@@ -29,9 +36,11 @@ def convert(workbook: str) -> None: # workbook is OWC-Text
             # use first part of label as preflabel
             label = row[1]
 
-            entry.update( { "uri": uri }
+            entry.update( {"uri": uri} )
 
-            )
+            print(entry)
+
+    return jsonld
 
 def make_uri(code: str) -> str:
     """ Convert OCW-code to URI """
@@ -80,4 +89,4 @@ def parse_label(label: str) -> None:
     2. Bezeichnung is both preflabel and definition
     3. K indicates changes to OWC standard, perhaps as altlabel oder hiddenlabel """
 
-convert("OWC Text.xls")
+main(WORKBOOK)
