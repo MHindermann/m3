@@ -1,4 +1,4 @@
-from __future__ import annotations # see https://www.python.org/dev/peps/pep-0563/
+from __future__ import annotations  # see https://www.python.org/dev/peps/pep-0563/
 from typing import List, Set, Dict, Tuple, Optional, Union
 from openpyxl import load_workbook
 from collections import OrderedDict
@@ -10,10 +10,12 @@ HERE = path.dirname(path.abspath(__file__))
 WORKBOOK = path.join(HERE, "OWC_Text.xlsx")
 
 def main(workbook: str) -> None:
+    """ Main app"""
+
     convert(workbook)
 
 
-def convert(workbook: str) -> None: # workbook is OWC-Text
+def convert(workbook: str) -> None:
     """ Convert the workbook to JSON-LD in SKOS format """
 
     # load template and transform into ordered dict
@@ -22,32 +24,30 @@ def convert(workbook: str) -> None: # workbook is OWC-Text
     skos = OrderedDict()
     skos.update(template)
 
-    conceptScheme = {"uri": "https://bartoc.org/owc/",
-               "type": "skos:ConceptScheme",
-               "label": "OWC Geographical Divisions"}
+    concept_scheme = {"uri": "https://bartoc.org/owc/",
+                      "type": "skos:ConceptScheme",
+                      "label": "OWC Geographical Divisions"}
 
-    graph = [conceptScheme]
+    graph = [concept_scheme]
 
     wb = load_workbook(workbook)
     for ws in wb:
-        for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, max_row=100, values_only=True): # max_row for dev
+        for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, max_row=100, values_only=True):  # max_row for dev
 
             entry = OrderedDict()
 
-            # convert code to uri
+            # convert code to uri and add type (fixed)
             code = row[0]
             if code is None:
                 continue
             uri = make_uri(code)
-            entry.update({"uri": uri},
-                         {"type": "skos:Concept"})
+            entry.update({"uri": uri})
+            entry.update({"type": "skos:Concept"})
 
             # use first part of label as prefLabel
             label = row[1]
             parsed = parse_label(label)
             entry.update(parsed)
-
-            # print(entry)
 
             graph.append(entry)
 
@@ -58,12 +58,14 @@ def convert(workbook: str) -> None: # workbook is OWC-Text
 
     return skos
 
+
 def make_uri(code: str) -> str:
     """ Convert OCW-code to URI """
 
     code = code.replace(" ", "")
     uri = "https://bartoc.org/ocw/" + code
     return uri
+
 
 def parse_label(label: str) -> None:
     """ Parse OCW-label"""
@@ -73,8 +75,8 @@ def parse_label(label: str) -> None:
     label_split = label_copy.split(".", 1)
 
     value = label_split[0]
-    prefLabel = {"lang": "en",
-                 "value": value}
+    pref_label = {"lang": "en",
+                  "value": value}
 
     if len(label_split) > 1:
         value = label_split[1]
@@ -83,19 +85,19 @@ def parse_label(label: str) -> None:
     definition = {"lang": "en",
                   "value": value}  # text hinter dem punkt
 
-    altLabel = None  # text in klammern oder k, evtl eher hiddenLabel
-    inScheme = None # wenn top label, dann name des schemas
+    alt_label = None  # text in klammern oder k, evtl eher hiddenLabel
+    in_scheme = None # wenn top label, dann name des schemas
 
-    
+
 
     broader = None # wenn nicht top label, elternlabel
 
     narrower = None # wenn nicht bottom label, kinderlabel
 
-    labels = {"prefLabel": prefLabel,
-              "altLabel": altLabel,
+    labels = {"prefLabel": pref_label,
+              "altLabel": alt_label,
               "definition": definition,
-              "inScheme": inScheme,
+              "inScheme": in_scheme,
               "broader": broader,
               "narrower": narrower}
 
