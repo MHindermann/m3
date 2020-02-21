@@ -4,10 +4,10 @@ from openpyxl import load_workbook
 from collections import OrderedDict
 
 import json
-import os
+from os import path
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-WORKBOOK = os.path.join(HERE, "OWC_Text.xlsx")
+HERE = path.dirname(path.abspath(__file__))
+WORKBOOK = path.join(HERE, "OWC_Text.xlsx")
 
 def main(workbook: str) -> None:
     convert(workbook)
@@ -19,10 +19,15 @@ def convert(workbook: str) -> None: # workbook is OWC-Text
     # load template and transform into ordered dict
     with open("template.json", 'r') as file:
         template = json.load(file)
-    jsonld = OrderedDict()
-    jsonld.update(template)
+    skos = OrderedDict()
+    skos.update(template)
 
-    #
+    conceptScheme = {"uri": "https://bartoc.org/owc/",
+               "type": "skos:ConceptScheme",
+               "label": "OWC Geographical Divisions"}
+
+    graph = [conceptScheme]
+
     wb = load_workbook(workbook)
     for ws in wb:
         for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, values_only=True):
@@ -31,21 +36,31 @@ def convert(workbook: str) -> None: # workbook is OWC-Text
 
             # convert code to uri
             code = row[0]
+            if code is None:
+                continue
             uri = make_uri(code)
+            entry.update({"uri": uri})
 
-            # use first part of label as preflabel
+            # use first part of label as prefLabel
             label = row[1]
+            parsed = parse_label(label)
+            entry.update(parsed)
 
-            entry.update( {"uri": uri} )
+            # print(entry)
 
-            print(entry)
+            graph.append(entry)
 
-    return jsonld
+    skos.update({"graph": graph})
+
+    # print for debug
+    print(json.dumps(skos, indent=4, sort_keys=False))
+
+    return skos
 
 def make_uri(code: str) -> str:
     """ Convert OCW-code to URI """
 
-    code.replace(" ", "")
+    code = code.replace(" ", "")
     uri = "https://bartoc.org/ocw/" + code
     return uri
 
@@ -60,29 +75,14 @@ def parse_label(label: str) -> None:
     broader = None # wenn nicht top label, elternlabel
     narrower = None # wenn nicht bottom label, kinderlabel
 
+    labels = {"prefLabel": prefLabel,
+              "altLabel": altLabel,
+              "definition": definition,
+              "inScheme": inScheme,
+              "broader": broader,
+              "narrower": narrower}
 
-    labels = { "skos:prefLabel": prefLabel}
-
-""" context = OrderedDict()
-    context.update( { "skos" : "http://www.w3.org/2004/02/skos/core#" } )
-
-    for resource in resources:
-        context.update( { resource.name : resource.url } )
-    
-    context.update( { "results" : { "@id": results_id,
-                                    "@type" : "@id",
-                                    "@container" : "@set" }
-                      } )
-
-    context.update( { "altLabel" : "skos:altLabel",
-                      "definition" : "skos:definition",
-                      "hiddenLabel" : "skos:hiddenLabel",
-                      "prefLabel" : "skos:prefLabel",
-                      "source" : "skos:ConceptScheme",
-                      "uri" : "@id"
-                      } )
-"""
-
+    return labels
 
 """ Data structure of OWC Text entries: 
     1. Code is both hierarchical and identifier; so use as uri 
