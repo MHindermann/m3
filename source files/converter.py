@@ -30,7 +30,7 @@ def convert(workbook: str) -> None: # workbook is OWC-Text
 
     wb = load_workbook(workbook)
     for ws in wb:
-        for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, values_only=True):
+        for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, max_row=100, values_only=True): # max_row for dev
 
             entry = OrderedDict()
 
@@ -39,7 +39,8 @@ def convert(workbook: str) -> None: # workbook is OWC-Text
             if code is None:
                 continue
             uri = make_uri(code)
-            entry.update({"uri": uri})
+            entry.update({"uri": uri},
+                         {"type": "skos:Concept"})
 
             # use first part of label as prefLabel
             label = row[1]
@@ -67,12 +68,28 @@ def make_uri(code: str) -> str:
 def parse_label(label: str) -> None:
     """ Parse OCW-label"""
 
-    prefLabel = None # text vor dem punkt
-    # "prefLabel":{"lang":"en","value":"Archaeological Measures, Techniques and Analysis"},
-    altLabel = None # text in klammern oder k, evtl eher hiddenLabel
-    definition = None # text hinter dem punkt
+    label_copy = label
+
+    label_split = label_copy.split(".", 1)
+
+    value = label_split[0]
+    prefLabel = {"lang": "en",
+                 "value": value}
+
+    if len(label_split) > 1:
+        value = label_split[1]
+    else:
+        value = None
+    definition = {"lang": "en",
+                  "value": value}  # text hinter dem punkt
+
+    altLabel = None  # text in klammern oder k, evtl eher hiddenLabel
     inScheme = None # wenn top label, dann name des schemas
+
+    
+
     broader = None # wenn nicht top label, elternlabel
+
     narrower = None # wenn nicht bottom label, kinderlabel
 
     labels = {"prefLabel": prefLabel,
