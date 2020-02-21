@@ -88,7 +88,7 @@ def parse_label(label: str) -> None:
     alt_label = None  # text in klammern oder k, evtl eher hiddenLabel
     in_scheme = None # wenn top label, dann name des schemas
 
-
+    # TODO: implement broader, narrower, inScheme, altLabel
 
     broader = None # wenn nicht top label, elternlabel
 
