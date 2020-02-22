@@ -13,14 +13,16 @@ WORKBOOK = path.join(HERE, "OWC_Text.xlsx")
 def main(workbook: str) -> None:
     """ Main app"""
 
-    codes = load_codes(workbook)
     convert(workbook)
 
 
 def convert(workbook: str) -> None:
     """ Convert workbook to JSON-LD in SKOS format """
 
-    # load template and transform into ordered dict
+    # load codes:
+    codes = load_codes(workbook)
+
+    # load template and transform into ordered dict:
     with open("template.json", 'r') as file:
         template = json.load(file)
     skos = OrderedDict()
@@ -32,13 +34,14 @@ def convert(workbook: str) -> None:
 
     graph = [concept_scheme]
 
+    #
     wb = load_workbook(workbook)
     for ws in wb:
-        for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, max_row=100, values_only=True):  # max_row for dev
+        for row in ws.iter_rows(min_row=3497, min_col=1, max_col=3, max_row=3508, values_only=True):  # max_row for dev
 
             entry = OrderedDict()
 
-            # convert code to uri and add type (fixed)
+            # convert code to uri and add type (fixed):
             code = row[0]
             if code is None:
                 continue
@@ -47,10 +50,12 @@ def convert(workbook: str) -> None:
             entry.update({"uri": uri})
             entry.update({"type": "skos:Concept"})
 
-            # use first part of label as prefLabel
-            label = row[1]
-            parsed = parse(label)
-            entry.update(parsed)
+            # add labels:
+            labels = parse(row[1])
+            entry.update(labels)
+
+            # add hierarchy:
+            entry.update(make_hierarchy(code, codes))
 
             graph.append(entry)
 
@@ -68,7 +73,7 @@ def load_codes(workbook) -> List[str]:
     codes = []
     wb = load_workbook(workbook)
     for ws in wb:
-        for row in ws.iter_rows(min_row=7, min_col=1, max_col=1, max_row=100, values_only=True):
+        for row in ws.iter_rows(min_row=7, min_col=1, max_col=1, values_only=True):
             code = row[0]
             if code is None:
                 continue
@@ -78,7 +83,7 @@ def load_codes(workbook) -> List[str]:
     return codes
 
 
-def make_hierarchy(code: str, codes: List[str]):
+def make_hierarchy(code: str, codes: List[str]) -> Dict:
     """ Add broader and narrower to concept """
 
     # top concept:
@@ -92,19 +97,28 @@ def make_hierarchy(code: str, codes: List[str]):
             # first symbol of entry matches:
             if code[0] is entry[0]:
                 # second symbol is number (e.g, A1):
-                if entry[1] in str(set(range(0,10))):
+                if entry[1] in str(set(range(0, 10))):
                     narrower.append({"uri": make_uri(entry)})
                 # second symbol is not number and no other numbers (e.g., AA):
                 elif len(entry) < 3:
                     narrower.append({"uri": make_uri(entry)})
 
     # middle concept:
-    elif len(set(code).intersection(str(set(range(0,10))))) == 0:
+    elif len(set(code).intersection(str(set(range(0, 10))))) == 0:
+        print(f"middle concept with code {code}")
         broader = [{"uri": make_uri(code[0])}]
         narrower = []
         for entry in codes:
-            if code in entry and "." not in entry:
+            if entry == code:
+                continue
+            elif code in entry and "." not in entry:
                 narrower.append({"uri": make_uri(entry)})
+            #elif entry.count(".") == 1 and code in ["OJ" + str(n) for n in range(6)]:
+            #    narrower.append({"uri": make_uri(entry)})
+
+        for thing in narrower:
+            print(thing.values())
+
 
     # bottom concept:
     else:
@@ -119,7 +133,7 @@ def make_hierarchy(code: str, codes: List[str]):
                 broader = [{"uri": make_uri(code.split(".")[0])}]
                 narrower = []
                 for entry in codes:
-                    if code in entry and code is not entry:
+                    if (code in entry) and (code is not entry):
                         narrower.append({"uri": make_uri(entry)})
         else:
             narrower = None
@@ -139,17 +153,18 @@ def make_uri(code: str) -> str:
     return uri
 
 
-def parse(label: str) -> None:
+def parse(label: str) -> Dict:
     """ Parse OCW-label"""
 
     label_copy = label
 
+    # prefLabel:
     label_split = label_copy.split(".", 1)
-
     value = label_split[0]
     pref_label = {"lang": "en",
                   "value": value}
 
+    # definition:
     if len(label_split) > 1:
         value = label_split[1]
     else:
@@ -157,27 +172,17 @@ def parse(label: str) -> None:
     definition = {"lang": "en",
                   "value": value}  # text hinter dem punkt
 
+    # altLabel:
     alt_label = None  # text in klammern oder k, evtl eher hiddenLabel
+
+    # inScheme:
     in_scheme = None # wenn top label, dann name des schemas
-
-    # TODO: implement broader, narrower, inScheme, altLabel
-
-    broader = None # wenn nicht top label, elternlabel
-
-    narrower = None # wenn nicht bottom label, kinderlabel
 
     labels = {"prefLabel": pref_label,
               "altLabel": alt_label,
               "definition": definition,
-              "inScheme": in_scheme,
-              "broader": broader,
-              "narrower": narrower}
+              "inScheme": in_scheme}
 
     return labels
-
-""" Data structure of OWC Text entries: 
-    1. Code is both hierarchical and identifier; so use as uri 
-    2. Bezeichnung is both preflabel and definition
-    3. K indicates changes to OWC standard, perhaps as altlabel oder hiddenlabel """
 
 main(WORKBOOK)

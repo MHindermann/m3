@@ -2,3 +2,9 @@ Stuff to keep in mind when wiriting the paper:
 
 1. Template taken from Skosmos; enriched with some concepts (skos:definiton, skos:changeNote)
 2. Hierarchy somewhat unclear A is parent of both A1 and AA
+
+
+""" Data structure of OWC Text entries:
+    1. Code is both hierarchical and identifier; so use as uri
+    2. Bezeichnung is both preflabel and definition
+    3. K indicates changes to OWC standard, perhaps as altlabel oder hiddenlabel """
