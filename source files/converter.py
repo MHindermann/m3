@@ -15,13 +15,16 @@ SCHEME = {"uri": "https://bartoc.org/owc/",
           "type": "skos:ConceptScheme",
           "label": "OWC Geographical Divisions"}
 
-def main(workbook: str) -> None:
+def main(workbook: str, verbose: int = 0) -> None:
     """ Main app"""
 
     vocabulary = convert(workbook)
-    if "owc_skosmos.json":
-        with open("owc_skosmos.json", 'w') as file:
-            json.dump(vocabulary, file)
+    # print to console:
+    if verbose == 1:
+        print(json.dumps(vocabulary, indent=4, sort_keys=False))
+    # save to file:
+    with open("owc_skosmos.json", 'w') as file:
+        json.dump(vocabulary, file)
 
 def convert(workbook: str) -> OrderedDict:
     """ Convert workbook to JSON-LD in SKOS format """
@@ -54,10 +57,6 @@ def convert(workbook: str) -> OrderedDict:
             graph.append(entry)
 
     vocabulary.update({"graph": graph})
-
-    # print for debug
-    print(json.dumps(vocabulary, indent=4, sort_keys=False))
-
     return vocabulary
 
 
@@ -207,4 +206,4 @@ def parse(label: str) -> Dict:
     return labels
 
 
-main(WORKBOOK)
+main(WORKBOOK, 1)
