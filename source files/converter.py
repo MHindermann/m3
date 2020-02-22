@@ -105,7 +105,7 @@ def make_hierarchy(code: str, codes: List[str]) -> Dict:
 
     # middle concept:
     elif len(set(code).intersection(str(set(range(0, 10))))) == 0:
-        print(f"middle concept with code {code}")
+        print(f"middle concept with code {code}")  # debug
         broader = [{"uri": make_uri(code[0])}]
         narrower = []
         for entry in codes:
@@ -113,15 +113,10 @@ def make_hierarchy(code: str, codes: List[str]) -> Dict:
                 continue
             elif code in entry and "." not in entry:
                 narrower.append({"uri": make_uri(entry)})
-            #elif entry.count(".") == 1 and code in ["OJ" + str(n) for n in range(6)]:
-            #    narrower.append({"uri": make_uri(entry)})
-
-        for thing in narrower:
-            print(thing.values())
-
 
     # bottom concept:
     else:
+        print(f"bottom concept with code {code}")  # debug
         # OJ as special case:
         if "." in code:
             # bottom concept (e.g., OJ5.11.cAbau):
@@ -133,8 +128,12 @@ def make_hierarchy(code: str, codes: List[str]) -> Dict:
                 broader = [{"uri": make_uri(code.split(".")[0])}]
                 narrower = []
                 for entry in codes:
-                    if (code in entry) and (code is not entry):
+                    if entry == code:
+                        continue
+                    elif code in entry:
                         narrower.append({"uri": make_uri(entry)})
+        elif "OJ" in code:
+            pass #
         else:
             narrower = None
             broader = [{"uri": make_uri(code[:2])}]
@@ -160,15 +159,15 @@ def parse(label: str) -> Dict:
 
     # prefLabel:
     label_split = label_copy.split(".", 1)
-    value = label_split[0]
+    value = label_split[0] + "."
     pref_label = {"lang": "en",
                   "value": value}
 
     # definition:
-    if len(label_split) > 1:
-        value = label_split[1]
-    else:
+    if len(label_split) < 2 or label_split == "":
         value = None
+    else:
+        value = label_split[1]
     definition = {"lang": "en",
                   "value": value}  # text hinter dem punkt
 

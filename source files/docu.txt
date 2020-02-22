@@ -8,3 +8,14 @@ Stuff to keep in mind when wiriting the paper:
     1. Code is both hierarchical and identifier; so use as uri
     2. Bezeichnung is both preflabel and definition
     3. K indicates changes to OWC standard, perhaps as altlabel oder hiddenlabel """
+
+
+
+
+    ...............
+
+            #elif entry.count(".") == 1 and code in ["OJ" + str(n) for n in range(6)]:
+            #    narrower.append({"uri": make_uri(entry)})
+
+        for thing in narrower:
+            print(thing.values())
