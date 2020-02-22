@@ -1,0 +1,4 @@
+Stuff to keep in mind when wiriting the paper:
+
+1. Template taken from Skosmos; enriched with some concepts (skos:definiton, skos:changeNote)
+2. Hierarchy somewhat unclear A is parent of both A1 and AA

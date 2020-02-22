@@ -15,6 +15,7 @@
     "prefLabel": "skos:prefLabel",
     "altLabel": "skos:altLabel",
     "hiddenLabel": "skos:hiddenLabel",
+    "definition": "skos:definition",
     "broader": "skos:broader",
     "narrower": "skos:narrower",
     "related": "skos:related",
@@ -23,7 +24,8 @@
     "closeMatch": "skos:closeMatch",
     "broadMatch": "skos:broadMatch",
     "narrowMatch": "skos:narrowMatch",
-    "relatedMatch": "skos:relatedMatch"
+    "relatedMatch": "skos:relatedMatch",
+    "changeNote": "skos:changeNote"
   },
   "graph": [
     {

@@ -9,14 +9,16 @@ from os import path
 HERE = path.dirname(path.abspath(__file__))
 WORKBOOK = path.join(HERE, "OWC_Text.xlsx")
 
+
 def main(workbook: str) -> None:
     """ Main app"""
 
+    codes = load_codes(workbook)
     convert(workbook)
 
 
 def convert(workbook: str) -> None:
-    """ Convert the workbook to JSON-LD in SKOS format """
+    """ Convert workbook to JSON-LD in SKOS format """
 
     # load template and transform into ordered dict
     with open("template.json", 'r') as file:
@@ -40,13 +42,14 @@ def convert(workbook: str) -> None:
             code = row[0]
             if code is None:
                 continue
+            code = code.replace(" ", "")
             uri = make_uri(code)
             entry.update({"uri": uri})
             entry.update({"type": "skos:Concept"})
 
             # use first part of label as prefLabel
             label = row[1]
-            parsed = parse_label(label)
+            parsed = parse(label)
             entry.update(parsed)
 
             graph.append(entry)
@@ -59,6 +62,73 @@ def convert(workbook: str) -> None:
     return skos
 
 
+def load_codes(workbook) -> List[str]:
+    """ Load all codes from workbook """
+
+    codes = []
+    wb = load_workbook(workbook)
+    for ws in wb:
+        for row in ws.iter_rows(min_row=7, min_col=1, max_col=1, max_row=100, values_only=True):
+            code = row[0]
+            if code is None:
+                continue
+            else:
+                code = code.replace(" ", "")
+                codes.append(code)
+    return codes
+
+
+def make_hierarchy(code: str, codes: List[str]):
+    """ Add broader and narrower to concept """
+
+    # top concept:
+    if len(code) == 1:
+        broader = None
+        narrower = []
+        for entry in codes:
+            # exclude (other) top concepts (e.g., A):
+            if len(entry) < 2:
+                continue
+            # first symbol of entry matches:
+            if code[0] is entry[0]:
+                # second symbol is number (e.g, A1):
+                if entry[1] in str(set(range(0,10))):
+                    narrower.append({"uri": make_uri(entry)})
+                # second symbol is not number and no other numbers (e.g., AA):
+                elif len(entry) < 3:
+                    narrower.append({"uri": make_uri(entry)})
+
+    # middle or bottom concept:
+    elif len(set(code).intersection(str(set(range(0,10))))) == 0:
+        if "." in code:
+            # bottom concept (e.g., OJ5.11.cAbau):
+            if code.count(".") == 2:
+                narrower = None
+                broader = [{"uri": make_uri(code.split(".")[0] + "." + code.split(".")[1])}]
+            # middle concept (e.g, OJ5.11):
+            else:
+                broader = [{"uri": make_uri(code.split(".")[0])}]
+                narrower = []
+                for entry in codes:
+                    if code in entry and code is not entry:
+                        narrower.append({"uri": make_uri(entry)})
+
+        # middle concept:
+        else:
+            broader = [{"uri": make_uri(code[0])}]
+            narrower = []
+
+    # bottom concept:
+    else:
+        narrower = None
+        broader =
+
+    hierarchy = {"broader": broader,
+                 "narrower": narrower}
+
+    return hierarchy
+
+
 def make_uri(code: str) -> str:
     """ Convert OCW-code to URI """
 
@@ -67,7 +137,7 @@ def make_uri(code: str) -> str:
     return uri
 
 
-def parse_label(label: str) -> None:
+def parse(label: str) -> None:
     """ Parse OCW-label"""
 
     label_copy = label
