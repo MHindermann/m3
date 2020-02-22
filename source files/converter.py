@@ -1,4 +1,4 @@
-from __future__ import annotations  # see https://www.python.org/dev/peps/pep-0563/
+from __future__ import annotations
 from typing import List, Set, Dict, Tuple, Optional, Union
 from openpyxl import load_workbook
 from collections import OrderedDict
@@ -6,8 +6,8 @@ from collections import OrderedDict
 import json
 from os import path
 
-HERE = path.dirname(path.abspath(__file__))
-WORKBOOK = path.join(HERE, "OWC_Text.xlsx")
+DIR = path.dirname(path.abspath(__file__))
+WORKBOOK = path.join(DIR, "OWC_Text.xlsx")
 
 
 def main(workbook: str) -> None:
@@ -83,25 +83,33 @@ def load_codes(workbook) -> List[str]:
     return codes
 
 
+def make_top(code: str, codes: List[str]) -> Dict:
+    """ Make hierarchy for a top concept """
+
+    broader = None
+    narrower = []
+    for entry in codes:
+        # exclude (other) top concepts (e.g., A):
+        if len(entry) < 2:
+            continue
+        # first symbol of entry matches:
+        if code[0] is entry[0]:
+            # second symbol is number (e.g, A1):
+            if entry[1] in str(set(range(0, 10))):
+                narrower.append({"uri": make_uri(entry)})
+            # second symbol is not number and no other numbers (e.g., AA):
+            elif len(entry) < 3:
+                narrower.append({"uri": make_uri(entry)})
+    hierarchy = {"broader": broader,
+                 "narrower": narrower}
+    return hierarchy
+
 def make_hierarchy(code: str, codes: List[str]) -> Dict:
-    """ Add broader and narrower to concept """
+    """ Make broader and narrower for code """
 
     # top concept:
     if len(code) == 1:
-        broader = None
-        narrower = []
-        for entry in codes:
-            # exclude (other) top concepts (e.g., A):
-            if len(entry) < 2:
-                continue
-            # first symbol of entry matches:
-            if code[0] is entry[0]:
-                # second symbol is number (e.g, A1):
-                if entry[1] in str(set(range(0, 10))):
-                    narrower.append({"uri": make_uri(entry)})
-                # second symbol is not number and no other numbers (e.g., AA):
-                elif len(entry) < 3:
-                    narrower.append({"uri": make_uri(entry)})
+        return make_top(code, codes)
 
     # middle concept:
     elif len(set(code).intersection(str(set(range(0, 10))))) == 0:
@@ -132,8 +140,19 @@ def make_hierarchy(code: str, codes: List[str]) -> Dict:
                         continue
                     elif code in entry:
                         narrower.append({"uri": make_uri(entry)})
+                if len(narrower) == 0:
+                    narrower = None
         elif "OJ" in code:
-            pass #
+            broader = [{"uri": make_uri("OJ")}]
+            narrower = []
+            for entry in codes:
+                if entry == code:
+                    continue
+                elif code in entry and entry.count(".") == 1:
+                    narrower.append({"uri": make_uri(entry)})
+            if len(narrower) == 0:
+                narrower = None
+
         else:
             narrower = None
             broader = [{"uri": make_uri(code[:2])}]
@@ -183,5 +202,6 @@ def parse(label: str) -> Dict:
               "inScheme": in_scheme}
 
     return labels
+
 
 main(WORKBOOK)
