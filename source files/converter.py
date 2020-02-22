@@ -98,8 +98,17 @@ def make_hierarchy(code: str, codes: List[str]):
                 elif len(entry) < 3:
                     narrower.append({"uri": make_uri(entry)})
 
-    # middle or bottom concept:
+    # middle concept:
     elif len(set(code).intersection(str(set(range(0,10))))) == 0:
+        broader = [{"uri": make_uri(code[0])}]
+        narrower = []
+        for entry in codes:
+            if code in entry and "." not in entry:
+                narrower.append({"uri": make_uri(entry)})
+
+    # bottom concept:
+    else:
+        # OJ as special case:
         if "." in code:
             # bottom concept (e.g., OJ5.11.cAbau):
             if code.count(".") == 2:
@@ -112,16 +121,9 @@ def make_hierarchy(code: str, codes: List[str]):
                 for entry in codes:
                     if code in entry and code is not entry:
                         narrower.append({"uri": make_uri(entry)})
-
-        # middle concept:
         else:
-            broader = [{"uri": make_uri(code[0])}]
-            narrower = []
-
-    # bottom concept:
-    else:
-        narrower = None
-        broader =
+            narrower = None
+            broader = [{"uri": make_uri(code[:2])}]
 
     hierarchy = {"broader": broader,
                  "narrower": narrower}
