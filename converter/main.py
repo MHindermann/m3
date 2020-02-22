@@ -1,4 +1,4 @@
-""" converter.py """
+""" main.py """
 
 from __future__ import annotations
 from typing import List, Dict
@@ -9,7 +9,7 @@ import json
 from utility import load_codes, load_workbook, load_template
 
 DIR = path.dirname(path.abspath(__file__))
-WORKBOOK = path.join(DIR, "OWC_Text.xlsx")
+WORKBOOK = path.join(DIR, "input/OWC_Text.xlsx")
 CODES = load_codes(WORKBOOK)
 SCHEME = {"uri": "https://bartoc.org/owc/",
           "type": "skos:ConceptScheme",
@@ -23,8 +23,9 @@ def main(workbook: str, verbose: int = 0) -> None:
     if verbose == 1:
         print(json.dumps(vocabulary, indent=4, sort_keys=False))
     # save to file:
-    with open("owc_skosmos.json", 'w') as file:
-        json.dump(vocabulary, file)
+    with open("output/owc_skosmos.json", 'w') as file:
+        json.dump(vocabulary, file, indent=4, sort_keys=False)
+
 
 def convert(workbook: str) -> OrderedDict:
     """ Convert workbook to JSON-LD in SKOS format """
@@ -38,14 +39,14 @@ def convert(workbook: str) -> OrderedDict:
 
             entry = OrderedDict()
 
-            # convert code to uri and add type (fixed):
+            # convert code to uri and add type:
             code = row[0]
             if code is None:
                 continue
             code = code.replace(" ", "")
             uri = make_uri(code)
-            entry.update({"uri": uri})
-            entry.update({"type": "skos:Concept"})
+            entry.update({"uri": uri,
+                          "type": "skos:Concept"})
 
             # add labels:
             labels = parse(row[1])
