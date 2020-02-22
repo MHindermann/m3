@@ -1,26 +1,12 @@
+""" converter.py """
+
 from __future__ import annotations
-from typing import List, Set, Dict, Tuple, Optional, Union
-from openpyxl import load_workbook
+from typing import List, Dict
 from collections import OrderedDict
-
-import json
 from os import path
+import json
 
-def load_codes(workbook) -> List[str]:
-    """ Load all codes from workbook """
-
-    codes = []
-    wb = load_workbook(workbook)
-    for ws in wb:
-        for row in ws.iter_rows(min_row=7, min_col=1, max_col=1, values_only=True):
-            code = row[0]
-            if code is None:
-                continue
-            else:
-                code = code.replace(" ", "")
-                codes.append(code)
-    return codes
-
+from utility import load_codes, load_workbook, load_template
 
 DIR = path.dirname(path.abspath(__file__))
 WORKBOOK = path.join(DIR, "OWC_Text.xlsx")
@@ -29,24 +15,15 @@ SCHEME = {"uri": "https://bartoc.org/owc/",
           "type": "skos:ConceptScheme",
           "label": "OWC Geographical Divisions"}
 
-
 def main(workbook: str) -> None:
     """ Main app"""
 
-    convert(workbook)
+    vocabulary = convert(workbook)
+    if "owc_skosmos.json":
+        with open("owc_skosmos.json", 'w') as file:
+            json.dump(vocabulary, file)
 
-
-def load_template() -> OrderedDict:
-    """ Load template """
-
-    with open("template.json", 'r') as file:
-        template = json.load(file)
-    vocabulary = OrderedDict()
-    vocabulary.update(template)
-    return vocabulary
-
-
-def convert(workbook: str) -> None:
+def convert(workbook: str) -> OrderedDict:
     """ Convert workbook to JSON-LD in SKOS format """
 
     vocabulary = load_template()
