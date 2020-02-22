@@ -9,7 +9,7 @@ import json
 from utility import load_codes, load_workbook, load_template
 
 DIR = path.dirname(path.abspath(__file__))
-WORKBOOK = path.join(DIR, "input/OWC_Text.xlsx")
+WORKBOOK = path.join(DIR, "input/owc_text.xlsx")
 CODES = load_codes(WORKBOOK)
 SCHEME = {"uri": "https://bartoc.org/owc/",
           "type": "skos:ConceptScheme",
@@ -23,7 +23,8 @@ def main(workbook: str, verbose: int = 0) -> None:
     if verbose == 1:
         print(json.dumps(vocabulary, indent=4, sort_keys=False))
     # save to file:
-    with open("output/owc_skosmos.json", 'w') as file:
+
+    with open(path.join(DIR, "output/owc_skosmos.json"), 'w') as file:
         json.dump(vocabulary, file, indent=4, sort_keys=False)
 
 
