@@ -9,7 +9,7 @@ import json
 from utility import load_codes, load_workbook, load_template
 
 DIR = path.dirname(path.abspath(__file__))
-WORKBOOK = path.join(DIR, "input/owc_text.xlsx")
+WORKBOOK = path.join(DIR, "input/owcm_text.xlsx")
 CODES = load_codes(WORKBOOK)
 SCHEME = {"uri": "https://bartoc.org/owc/",
           "type": "skos:ConceptScheme",
