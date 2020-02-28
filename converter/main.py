@@ -221,7 +221,7 @@ def parse(label: str) -> Dict:
     return labels
 
 
-def make_changenote(descriptor, change: Union[str, None]) -> Dict:
+def make_changenote(descriptor: str, change: Union[str, None]) -> Dict:
     """ Make changeNote based on descriptor and change """
 
     if change is None:
