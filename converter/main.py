@@ -14,6 +14,7 @@ CODES = load_codes(WORKBOOK)
 SCHEME = {"uri": "https://bartoc.org/owc/",
           "type": "skos:ConceptScheme",
           "label": "OWC Geographical Divisions"}
+INSCHEME = "https://bartoc.org/owc/"
 
 def main(workbook: str, verbose: int = 0) -> None:
     """ Main app"""
@@ -36,7 +37,7 @@ def convert(workbook: str) -> OrderedDict:
 
     wb = load_workbook(workbook)
     for ws in wb:
-        for row in ws.iter_rows(min_row=3497, min_col=1, max_col=3, max_row=3508, values_only=True):  # max_row for dev
+        for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, values_only=True):  # add max_row for dev
 
             entry = OrderedDict()
 
@@ -45,6 +46,8 @@ def convert(workbook: str) -> OrderedDict:
             if code is None:
                 continue
             code = code.replace(" ", "")
+            if code is "":
+                continue
             uri = make_uri(code)
             entry.update({"uri": uri,
                           "type": "skos:Concept"})
@@ -198,7 +201,7 @@ def parse(label: str) -> Dict:
     alt_label = None  # text in klammern oder k, evtl eher hiddenLabel
 
     # inScheme:
-    in_scheme = None  # wenn top label, dann name des schemas
+    in_scheme = INSCHEME
 
     labels = {"prefLabel": pref_label,
               "altLabel": alt_label,
