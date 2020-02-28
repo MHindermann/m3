@@ -30,7 +30,7 @@
   },
   "graph": [
     {
-      "uri": "https://bartoc.org/owc/",
+      "uri": "https://bartoc.org/owcm/",
       "type": "skos:ConceptScheme",
       "label": "OWC Geographical Divisions"
     }

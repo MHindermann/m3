@@ -11,10 +11,10 @@ from utility import load_codes, load_workbook, load_template
 DIR = path.dirname(path.abspath(__file__))
 WORKBOOK = path.join(DIR, "input/owcm_full.xlsx")
 CODES = load_codes(WORKBOOK)
-SCHEME = {"uri": "https://bartoc.org/owc/",
+SCHEME = {"uri": "https://bartoc.org/owcm/",
           "type": "skos:ConceptScheme",
-          "label": "OWC Geographical Divisions"}
-INSCHEME = "https://bartoc.org/owc/"
+          "label": "OWCM"}
+INSCHEME = "https://bartoc.org/owcm/"
 
 def main(workbook: str, verbose: int = 0) -> None:
     """ Main app"""
@@ -25,7 +25,7 @@ def main(workbook: str, verbose: int = 0) -> None:
         print(json.dumps(vocabulary, indent=4, sort_keys=False))
     # save to file:
 
-    with open(path.join(DIR, "output/owc_skosmos.json"), 'w') as file:
+    with open(path.join(DIR, "output/owcm_skosmos.json"), 'w') as file:
         json.dump(vocabulary, file, indent=4, sort_keys=False)
 
 
@@ -183,18 +183,18 @@ def make_uri(code: str) -> str:
     """ Convert OCWM-code to URI """
 
     code = code.replace(" ", "")
-    uri = "https://bartoc.org/ocw/" + code
+    uri = "https://bartoc.org/ocwm/" + code
     return uri
 
 
 def parse(label: str) -> Dict:
     """ Parse OCWM-label"""
 
-    label_copy = label
+    label_copy = label.strip()
 
     # prefLabel:
     label_split = label_copy.split(".", 1)
-    value = label_split[0] + "."
+    value = label_split[0]
     pref_label = {"lang": "en",
                   "value": value}
 
@@ -202,11 +202,11 @@ def parse(label: str) -> Dict:
     if len(label_split) < 2 or label_split == "":
         definition = None
     else:
-        value = label_split[1]
+        value = label_split[1].strip()
         definition = {"lang": "en",
                       "value": value}  # text hinter dem punkt
 
-    # altLabel:
+    # TODO: altLabel:
     alt_label = None  # text in klammern oder k, evtl eher hiddenLabel
 
     # inScheme:
@@ -221,7 +221,7 @@ def parse(label: str) -> Dict:
 
 
 def make_changenote(descriptor, change: Union[str, None]) -> Dict:
-    """ Make changeNote based on descriptor and cell """
+    """ Make changeNote based on descriptor and change """
 
     if change is None:
         return {"changeNote": None}
@@ -230,10 +230,11 @@ def make_changenote(descriptor, change: Union[str, None]) -> Dict:
         # cell is of form "K":
         if change == "K":
             change_note = descriptor
-        # cell is of from "K word":
+        # cell is of from "K word(s)":
         else:
             change_note = change[2:]
 
         return {"changeNote": change_note}
+
 
 main(WORKBOOK, 1)
