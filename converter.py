@@ -24,13 +24,12 @@ def main(workbook: str, verbose: int = 0) -> None:
     if verbose == 1:
         print(json.dumps(vocabulary, indent=4, sort_keys=False))
     # save to file:
-
     with open(path.join(DIR, "output/owcm_skosmos.json"), 'w') as file:
         json.dump(vocabulary, file, indent=4, sort_keys=False)
 
 
 def convert(workbook: str) -> OrderedDict:
-    """ Convert workbook to JSON-LD in SKOS format """
+    """ Convert workbook to JSON-LD in Skosmos format """
 
     vocabulary = load_template()
     graph = [SCHEME]
@@ -40,7 +39,6 @@ def convert(workbook: str) -> OrderedDict:
         for row in ws.iter_rows(min_row=7, min_col=1, max_col=3, values_only=True):  # add max_row for dev
 
             entry = OrderedDict()
-
             code = row[0]
 
             # convert code to uri and add type:
@@ -169,7 +167,6 @@ def make_hierarchy(code: str) -> Dict:
         # OJn special case:
         if "." in code:
             return make_ojn_dot(code)
-
         elif "OJ" in code:
             return make_ojn(code)
         # standard case:
@@ -198,7 +195,6 @@ def parse(label: str) -> Dict:
     value = label_split[0]
     pref_label = {"lang": "en",
                   "value": value}
-
     # definition:
     if len(label_split) < 2 or label_split == "":
         definition = None
@@ -234,7 +230,6 @@ def make_changenote(descriptor: str, change: Union[str, None]) -> Dict:
         # cell is of from "K word(s)":
         else:
             change_note = change[2:]
-
         return {"changeNote": change_note}
 
 
