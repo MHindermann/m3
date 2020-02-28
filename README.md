@@ -12,14 +12,17 @@ The OWCM data was supplied to me in form of three Excel files. In what follows, 
 2.	owcm_text contains further lower-level divisions and is a superset of owcm_divisions. We can hence ignore owcm_divisions from now on. Each of the roughly 3000 entries has again three data fields: an alphanumerical code of various length and format indicating the hierarchical level of the entry, a plaintext descriptor ranging in scope from a few words to multiple sentences, and a binary changelog with the quirk that the actual change is indicated in the descriptor field by means of italics, or in some cases, added to the binary field itself.
 3.	owcm_index contains more than 10000 entries of entities that are classified according to owcm_text, using the same data fields. 
 
-There are a couple of takeaways from this analysis. First, on a conceptual level, OWCM as provided in owcm_text is a thesaurus (i.e., a controlled vocabulary with a binary relation on the vocabulary interpreted as semantic hierarchy). However, on the level of implementation, it is not even a controlled vocabulary since it lacks the usual specifications (see [4]). For example, the provided data fields are undefined and sometimes used inconsistently, and especially the plaintext descriptor is of very low granularity. 
+The main takeaway from this analysis is that the input data needs be cleaned. More precisely, on a conceptual level, OWCM as provided in owcm_text is a thesaurus (i.e., a controlled vocabulary with a binary relation on the vocabulary interpreted as semantic hierarchy). However, on the level of implementation, it is not even a controlled vocabulary since it lacks the usual specifications (see [4]). For example, the provided data fields are undefined and sometimes used inconsistently; the plaintext descriptor is of very low granularity; the hierarchy between entries is not made explicit. This problem can be amended by converting owcm_text into a SKOS instance [5]. This approach ties in nicely with the Basel University Library's strategy of collecting and making available as many thesauri, vocabularies and ontologies as possible in one place at BARTOC Skosmos [6]. In addition, having a SKOS instance of OWCM provides a clear framework for reconciling OWCM with GND.
 
-In order to amend this problem, 
-
+####OWCM to SKOS converter
 
 
 
 ####References
 [1] George P. Murdock (19XX)  
 [2] https://ehrafworldcultures.yale.edu/ehrafe/   
-[3] https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html 
+[3] https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html  
+[4]  
+[5] https://www.w3.org/TR/skos-reference/  
+[6] https://bartoc-skosmos.unibas.ch   
+
