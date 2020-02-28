@@ -1,7 +1,7 @@
 """ main.py """
 
 from __future__ import annotations
-from typing import List, Dict
+from typing import List, Dict, Union
 from collections import OrderedDict
 from os import path
 import json
@@ -41,8 +41,11 @@ def convert(workbook: str) -> OrderedDict:
 
             entry = OrderedDict()
 
-            # convert code to uri and add type:
             code = row[0]
+            descriptor = row[1]
+            change = row[2]
+
+            # convert code to uri and add type:
             if code is None:
                 continue
             code = code.replace(" ", "")
@@ -53,8 +56,14 @@ def convert(workbook: str) -> OrderedDict:
                           "type": "skos:Concept"})
 
             # add labels:
-            labels = parse(row[1])
+            labels = parse(descriptor)
             entry.update(labels)
+
+            # add historyNote:
+            entry.update({"historyNote": descriptor})
+
+            # add changeNote:
+            entry.update(make_changenote(descriptor, change))
 
             # add hierarchy:
             entry.update(make_hierarchy(code))
@@ -171,7 +180,7 @@ def make_hierarchy(code: str) -> Dict:
 
 
 def make_uri(code: str) -> str:
-    """ Convert OCW-code to URI """
+    """ Convert OCWM-code to URI """
 
     code = code.replace(" ", "")
     uri = "https://bartoc.org/ocw/" + code
@@ -179,7 +188,7 @@ def make_uri(code: str) -> str:
 
 
 def parse(label: str) -> Dict:
-    """ Parse OCW-label"""
+    """ Parse OCWM-label"""
 
     label_copy = label
 
@@ -191,11 +200,11 @@ def parse(label: str) -> Dict:
 
     # definition:
     if len(label_split) < 2 or label_split == "":
-        value = None
+        definition = None
     else:
         value = label_split[1]
-    definition = {"lang": "en",
-                  "value": value}  # text hinter dem punkt
+        definition = {"lang": "en",
+                      "value": value}  # text hinter dem punkt
 
     # altLabel:
     alt_label = None  # text in klammern oder k, evtl eher hiddenLabel
@@ -210,5 +219,21 @@ def parse(label: str) -> Dict:
 
     return labels
 
+
+def make_changenote(descriptor, change: Union[str, None]) -> Dict:
+    """ Make changeNote based on descriptor and cell """
+
+    if change is None:
+        return {"changeNote": None}
+    else:
+        change = change.strip()
+        # cell is of form "K":
+        if change == "K":
+            change_note = descriptor
+        # cell is of from "K word":
+        else:
+            change_note = change[2:]
+
+        return {"changeNote": change_note}
 
 main(WORKBOOK, 1)

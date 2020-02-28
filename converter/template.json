@@ -25,7 +25,8 @@
     "broadMatch": "skos:broadMatch",
     "narrowMatch": "skos:narrowMatch",
     "relatedMatch": "skos:relatedMatch",
-    "changeNote": "skos:changeNote"
+    "changeNote": "skos:changeNote",
+    "historyNote": "skos:historyNote"
   },
   "graph": [
     {
