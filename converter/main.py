@@ -42,8 +42,6 @@ def convert(workbook: str) -> OrderedDict:
             entry = OrderedDict()
 
             code = row[0]
-            descriptor = row[1]
-            change = row[2]
 
             # convert code to uri and add type:
             if code is None:
@@ -54,6 +52,9 @@ def convert(workbook: str) -> OrderedDict:
             uri = make_uri(code)
             entry.update({"uri": uri,
                           "type": "skos:Concept"})
+
+            descriptor = row[1].strip()
+            change = row[2]
 
             # add labels:
             labels = parse(descriptor)
