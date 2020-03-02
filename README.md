@@ -40,7 +40,7 @@ The GND provides a LOD API of its data that includes reconciliation for OpenRefi
 
 #### 4.1 Naive reconciliation
 
-`reconciled/owcm_gnd_naive` is a reconciliation based on the single data field `prefLabel` without any restrictions to a GND datatype. The result has 1443 or 43% automatic (i.e., high confidence) matches. However, even a cursory glance reveals quite a few (kinds of) false positives:
+`reconciled/owcm_gnd_naive` is a reconciliation based on the single data field `prefLabel` without any restrictions to a GND datatype. The result has 1443 or 43% automatic (i.e., high confidence) matches. (Note that naive reconciliation with Wikidata results in less than 1% automatic matches.) However, even a cursory glance reveals quite a few (kinds of) false positives:
 
 - _Minor Asiatic Colonies_ is matched to GND's _Minoer_, the ancient Minoan civilization.
 - 28 concepts that include the prefix _modern_ (e.g., _Modern Canada_) are matched to _Suite en style modern_ by composer Joseph Achron.
