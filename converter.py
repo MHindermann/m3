@@ -25,7 +25,7 @@ def main(workbook: str, verbose: int = 0) -> None:
     if verbose == 1:
         print(json.dumps(vocabulary, indent=4, sort_keys=False))
     # save to file:
-    with open(path.join(DIR, "output/owcm_skosmos.json"), 'w') as file:
+    with open(path.join(DIR, "skos/owcm_skos.json"), 'w') as file:
         json.dump(vocabulary, file, indent=4, sort_keys=False)
 
 
