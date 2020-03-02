@@ -14,16 +14,26 @@ The OWCM data was supplied to me in form of three Excel files. In what follows, 
 
 The main takeaway from this analysis is that the input data needs be cleaned. More precisely, on a conceptual level, OWCM as provided in `input/owcm_full` is a thesaurus (i.e., a controlled vocabulary with a binary relation on the vocabulary interpreted as semantic hierarchy). However, on the level of implementation, it is not even a controlled vocabulary since it lacks the usual specifications. For example, the provided data fields are undefined and sometimes used inconsistently; the plaintext descriptor is of very low granularity; the hierarchy between entries is not made explicit. This problem can be amended by converting `owcm_full` into a SKOS instance [4]. This approach ties in nicely with the Basel University Library's strategy of collecting and making available as many thesauri, vocabularies and ontologies as possible in one place at BARTOC Skosmos [5]. In addition, having a SKOS instance of OWCM provides a clear framework for reconciling OWCM with GND.
 
-#### 3. OWCM to SKOS converter
+#### 3. OWCM XLSX to SKOS converter
 
-`converter.py` is a Python script to convert `input/owcm_full` into  a Skosmos [6] compliant JSON-LD called `output/owcm_skos`.  The script is documented so I won't rehash the details here. `input/owcm_full` has a preamble defining its namespace and a graph which consists of the OWCM concept scheme and all of its concepts. Let me briefly describe the ten data fields used for these concepts in relation to the data fields of `input/owcm_full`:
+`converter.py` is a Python script to convert `input/owcm_full` into  a Skosmos [6] compliant JSON-LD called `output/owcm_skos`. The script is documented so I won't rehash the details here. `output/owcm_skos` has a preamble defining its namespace and a graph which consists of the OWCM concept scheme and all of its concepts. Let me describe some of the data fields of these concepts and explain how they relate to the data fields of `input/owcm_full` (i.e., code, descriptor, changelog):
 
-1. `uri`: a URI of the form https://bartoc.org/ocwm/CODE (e.g., https://bartoc.org/ocwm/AA6) intended to serve as its PID. By adding `output/owcm_skos` to BARTOC Skosmos, the URI will turn into a URL.
-2. `skos:prefLabel`: the part of the descripor that 
+1. `uri`: a URI of the form https://bartoc.org/ocwm/code intended to serve as its PID. By adding `output/owcm_skos` to BARTOC Skosmos, the URI will turn into a URL.
+2. `prefLabel`: the part of the descriptor that names the concept.
+3. `altLabel`: the part of the descriptor that used to name the concept; not yet implemented.
+4. `definition`: the part of the descriptor that defines the concept.
+5. `historyNote`: a copy of the descriptor. 
+6. `changeNote`: the change to the concept implemented by MKB as documented in changelog.
+7. `broader`: the parent concept.
+8. `narrower`: the child concept(s). 
 
-#### 4. Outlook
+In short, the code is used to provide each concept with a PID and to build the hierarchy of concepts; the descriptor is split into the data fields `prefLabel`, `altLabel`, `definition`; and changelog is used to build `changeNote`.
 
-#### 5. References  
+#### 4. Reconciling OWCM SKOS with GND
+
+#### 5. Outlook
+
+#### 6. References  
 [1] George P. Murdock (19XX)  
 [2] https://ehrafworldcultures.yale.edu/ehrafe/   
 [3] https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html  
