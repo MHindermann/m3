@@ -1,5 +1,10 @@
 ## Reconciling a local OWC instance with GND
-Maximilian Hindermann, https://orcid.org/0000-0002-9337-4655, University of Basel
+_Maximilian Hindermann, https://orcid.org/0000-0002-9337-4655, University of Basel  
+CC BY 4.0_
+
+#### 0. Preamble
+
+This document is best viewed on GitHub at https://github.com/MHindermann/m3. 
 
 #### 1. Introduction
 
@@ -14,13 +19,13 @@ The OWCM data was supplied to me in form of three Excel files. In what follows, 
 
 The main takeaway from this analysis is that the input data needs be cleaned. More precisely, on a conceptual level, OWCM as provided in `input/owcm_full` is a thesaurus (i.e., a controlled vocabulary with a binary relation on the vocabulary interpreted as semantic hierarchy). However, on the level of implementation, it is not even a controlled vocabulary since it lacks the usual specifications. For example, the provided data fields are undefined and sometimes used inconsistently; the plaintext descriptor is of very low granularity; the hierarchy between entries is not made explicit. This problem can be amended by converting `owcm_full` into a SKOS instance [4]. This approach ties in nicely with the Basel University Library's strategy of collecting and making available as many thesauri, vocabularies and ontologies as possible in one place at BARTOC Skosmos [5]. In addition, having a SKOS instance of OWCM provides a clear framework for reconciling OWCM with GND.
 
-#### 3. OWCM XLSX to SKOS converter
+#### 3. OWCM SKOS converter
 
-`converter.py` is a Python script to convert `input/owcm_full` into  a Skosmos [6] compliant JSON-LD called `output/owcm_skos`. The script is documented so I won't rehash the details here. `output/owcm_skos` has a preamble defining its namespace and a graph which consists of the OWCM concept scheme and all of its concepts. Let me describe some of the data fields of these concepts and explain how they relate to the data fields of `input/owcm_full` (i.e., code, descriptor, changelog):
+`converter.py` is a Python script to convert `input/owcm_full` into  a Skosmos [6] compliant JSON-LD called `output/owcm_skos`. The script is documented so I won't rehash the details here and instead focus on `output/owcm_skos`. `output/owcm_skos` has a preamble defining its namespace and a graph which consists of the OWCM concept scheme and all of its concepts. Let me describe some of the data fields of these concepts and explain how they relate to the data fields of `input/owcm_full` (i.e., code, descriptor, changelog):
 
 1. `uri`: a URI of the form https://bartoc.org/ocwm/code intended to serve as its PID. By adding `output/owcm_skos` to BARTOC Skosmos, the URI will turn into a URL.
-2. `prefLabel`: the part of the descriptor that names the concept.
-3. `altLabel`: the part of the descriptor that used to name the concept; not yet implemented.
+2. `prefLabel`: the part of the descriptor that names the concept (e.g., Taiwan).
+3. `altLabel`: the part of the descriptor that used to name the concept (e.g., Formosa); not yet implemented.
 4. `definition`: the part of the descriptor that defines the concept.
 5. `historyNote`: a copy of the descriptor. 
 6. `changeNote`: the change to the concept implemented by MKB as documented in changelog.
@@ -31,7 +36,7 @@ In short, the code is used to provide each concept with a PID and to build the h
 
 #### 4. Reconciling OWCM SKOS with GND
 
-The GND provides a LOD API of its data that includes reconciliation for OpenRefine [7]. 
+The GND provides a LOD API of its data that includes reconciliation for OpenRefine [7].  
 
 #### 5. Outlook
 
@@ -41,6 +46,6 @@ The GND provides a LOD API of its data that includes reconciliation for OpenRefi
 [3] https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html  
 [4] https://www.w3.org/TR/skos-reference/  
 [5] https://bartoc-skosmos.unibas.ch   
-[6] Suominen, O. et al. (2015): Publishing SKOS vocabularies with Skosmos. Manuscript submitted for review, June 2015.
+[6] Suominen, O. et al. (2015): Publishing SKOS vocabularies with Skosmos. Manuscript submitted for review, June 2015.  
 [7] http://lobid.org/gnd/reconcile
 
