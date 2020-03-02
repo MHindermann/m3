@@ -1,7 +1,7 @@
 """ converter.py """
 
 from __future__ import annotations
-from typing import List, Dict, Union
+from typing import Dict, Union
 from collections import OrderedDict
 from os import path
 import json
@@ -16,11 +16,12 @@ SCHEME = {"uri": "https://bartoc.org/owcm/",
           "label": "OWCM"}
 INSCHEME = "https://bartoc.org/owcm/"
 
+
 def main(workbook: str, verbose: int = 0) -> None:
     """ Main app"""
 
     vocabulary = convert(workbook)
-    # print to console:
+    # print to console if required:
     if verbose == 1:
         print(json.dumps(vocabulary, indent=4, sort_keys=False))
     # save to file:
@@ -54,7 +55,7 @@ def convert(workbook: str) -> OrderedDict:
             descriptor = row[1].strip()
             change = row[2]
 
-            # add labels:
+            # add labels prefLabel, definition, altLabel, inScheme:
             labels = parse(descriptor)
             entry.update(labels)
 
@@ -201,10 +202,10 @@ def parse(label: str) -> Dict:
     else:
         value = label_split[1].strip()
         definition = {"lang": "en",
-                      "value": value}  # text hinter dem punkt
+                      "value": value}
 
-    # TODO: altLabel:
-    alt_label = None  # text in klammern oder k, evtl eher hiddenLabel
+    # TODO: altLabel as string in brackets:
+    alt_label = None
 
     # inScheme:
     in_scheme = INSCHEME
