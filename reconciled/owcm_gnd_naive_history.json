@@ -1,0 +1,88 @@
+[
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "record-based"
+    },
+    "baseColumnName": "http://www.w3.org/2004/02/skos/core#prefLabel",
+    "expression": "grel:value",
+    "onError": "set-to-blank",
+    "newColumnName": "tmp",
+    "columnInsertIndex": 2,
+    "description": "Create column tmp at index 2 based on column http://www.w3.org/2004/02/skos/core#prefLabel using expression grel:value"
+  },
+  {
+    "op": "core/recon",
+    "engineConfig": {
+      "facets": [],
+      "mode": "record-based"
+    },
+    "columnName": "tmp",
+    "config": {
+      "mode": "standard-service",
+      "service": "https://lobid.org/gnd/reconcile/",
+      "identifierSpace": "https://lobid.org/gnd/",
+      "schemaSpace": "https://d-nb.info/standards/elementset/gnd#AuthorityResource",
+      "type": {
+        "id": "AuthorityResource",
+        "name": "Normdatenressource"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+    },
+    "description": "Reconcile cells in column tmp to type AuthorityResource"
+  },
+  {
+    "op": "core/extend-reconciled-data",
+    "engineConfig": {
+      "facets": [],
+      "mode": "record-based"
+    },
+    "baseColumnName": "tmp",
+    "endpoint": "https://lobid.org/gnd/reconcile/",
+    "identifierSpace": "https://lobid.org/gnd/",
+    "schemaSpace": "https://d-nb.info/standards/elementset/gnd#AuthorityResource",
+    "extension": {
+      "properties": [
+        {
+          "id": "gndIdentifier",
+          "name": "GND-Nummer"
+        }
+      ]
+    },
+    "columnInsertIndex": 3,
+    "description": "Extend data at index 3 based on column tmp"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "tmp",
+    "newColumnName": "GND Preferred Name",
+    "description": "Rename column tmp to GND Preferred Name"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "GND-Nummer",
+    "newColumnName": "GND ID",
+    "description": "Rename column GND-Nummer to GND ID"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "http://www.w3.org/2004/02/skos/core#inScheme",
+    "index": 5,
+    "description": "Move column http://www.w3.org/2004/02/skos/core#inScheme to position 5"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "http://www.w3.org/2004/02/skos/core#inScheme",
+    "index": 6,
+    "description": "Move column http://www.w3.org/2004/02/skos/core#inScheme to position 6"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "subject",
+    "newColumnName": "uri",
+    "description": "Rename column subject to uri"
+  }
+]
