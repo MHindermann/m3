@@ -31,6 +31,8 @@ In short, the code is used to provide each concept with a PID and to build the h
 
 #### 4. Reconciling OWCM SKOS with GND
 
+The GND provides a LOD API of its data that includes reconciliation for OpenRefine [7]. 
+
 #### 5. Outlook
 
 #### 6. References  
@@ -40,4 +42,5 @@ In short, the code is used to provide each concept with a PID and to build the h
 [4] https://www.w3.org/TR/skos-reference/  
 [5] https://bartoc-skosmos.unibas.ch   
 [6] Suominen, O. et al. (2015): Publishing SKOS vocabularies with Skosmos. Manuscript submitted for review, June 2015.
+[7] http://lobid.org/gnd/reconcile
 
