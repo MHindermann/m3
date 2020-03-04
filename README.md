@@ -36,7 +36,7 @@ In short, the code is used to provide each concept with a PID and to build the h
 
 ### 4. Reconciling OWCM SKOS with GND
 
-The GND provides a LOD API of its data that includes reconciliation for OpenRefine [7]. Reconciliation means that a OWCM concept from `skos/owcm_skos` is matched to a GND entry (see [8] for details on the matching process). A (partial) mapping between OWCM and GND bases on these matches is deemed valuable since it would allow for an easier integration of the MKB's holdings into the catalogues (respectively discovery systems to employ New Librarian Speak) of other institutions. In what follows I will discuss naive and more informed reconciliation strategies and their respective challenges. The result of each reconciliation test is provided as CSV or XLSX as `reconciled/owcm_gnd_naiveORinformed` and can be reproduced by calling `reconciled/owcm_naiveORinformed_history` on `skos/owcm_skos` in OpenRefine. 
+The GND provides a LOD API of its data that includes reconciliation for OpenRefine [7]. Reconciliation means that a OWCM concept from `skos/owcm_skos` is matched to a GND entry (see [8] for details on the matching process). A (partial) mapping between OWCM and GND based on these matches is deemed valuable since it would allow for an easier integration of the MKB's holdings into the catalogues (respectively discovery systems to employ New Librarian Speak) of other institutions. In what follows I will discuss naive and more informed reconciliation strategies and their respective challenges. The result of each reconciliation test is provided as CSV or XLSX as `reconciled/owcm_gnd_naiveORinformed` and can be reproduced by calling `reconciled/owcm_naiveORinformed_history` on `skos/owcm_skos` in OpenRefine. 
 
 #### 4.1 Naive reconciliation
 
@@ -50,7 +50,7 @@ The GND provides a LOD API of its data that includes reconciliation for OpenRefi
  
 #### 4.2 Informed reconciliation
 
-Blah.
+`reconciled/owcm_gnd_informed` is still based on the single data field `prefLabel` but limited to the GND datatype `PlaceOrGeographicName` [9]. Recall is lower as compared to `reconciled/owcm_gnd_naive`, but precision is increased.
 
 ### 5. Outlook
 
@@ -59,17 +59,18 @@ So far I have provided the basis of a reconciliation of OWCM SKOS with GND. Howe
 1. Compile a set of test concepts a with the help of an ethnographer to be used as benchmark.
 2. Systematize the encountered errors.
 3. Get a deeper understanding of the OpenRefine matching scores and check whether they can be adapted to the needs at hand.
-4. See whether triangulation can be used to improve matching quality by employing Cocoda [9].
+4. See whether triangulation can be used to improve matching quality by employing Cocoda [10].
 
 
 ### 6. References  
-[1] Murdock, George P. (19XX)  : blah  
+[1] Murdock, George P. (1969): _Outline of World Cultures_, 3rd revised edition. New Haven, Conn.: HRAF Press.  
 [2] https://ehrafworldcultures.yale.edu/ehrafe/   
 [3] https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html  
 [4] https://www.w3.org/TR/skos-reference/  
 [5] https://bartoc-skosmos.unibas.ch   
-[6] Suominen, O. et al. (2015): "Publishing SKOS vocabularies with Skosmos." Manuscript submitted for review.  
+[6] Suominen, O. et al. (2015): _Publishing SKOS vocabularies with Skosmos._ Manuscript submitted for review.  
 [7] http://lobid.org/gnd/reconcile  
 [8] https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation  
-[9] https://coli-conc.gbv.de/cocoda/  
+[9] https://d-nb.info/standards/elementset/gnd   
+[10] https://coli-conc.gbv.de/cocoda/  
 
