@@ -61,7 +61,7 @@ Most of these errors seem to be related to the scope of a concept. Perhaps they 
 
 ### 5. Outlook
 
-So far I have provided the basis of a reconciliation of OWCM SKOS with GND. However, implementing this reconciliation requires further work. There are many errors and any proposed mapping would have to be checked by an expert in the field (I for one lack the domain specific knowledge in many cases). So I propose the following road map to move forwards: 
+So far I have provided the basis of a reconciliation of OWCM SKOS with GND. However, implementing this reconciliation requires further work. There are many errors and any proposed mapping would have to be checked by an expert in the field (I for one lack the domain specific knowledge in many cases). So I propose the following road map to move forward: 
 
 1. Compile a set of test concepts a with the help of an ethnographer to be used as benchmark.
 2. Systematize the encountered errors and get a deeper understanding of the OpenRefine matching scores in order to check whether they can be adapted to the needs at hand.
