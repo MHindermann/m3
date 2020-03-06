@@ -5,6 +5,7 @@ from openpyxl import load_workbook
 from collections import OrderedDict
 import json
 
+
 def load_codes(workbook) -> List[str]:
     """ Load all codes from workbook """
 
