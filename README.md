@@ -1,5 +1,7 @@
 ## Reconciling a local OWC instance with GND
+
 Maximilian Hindermann, https://orcid.org/0000-0002-9337-4655, University of Basel  
+
 _CC BY 4.0_
 
 ### 0. Preamble
@@ -8,7 +10,7 @@ This document is best viewed on GitHub at https://github.com/MHindermann/m3.
 
 ### 1. Introduction
 
-The Outline of World Cultures (OWC) is an ontology for cultures created by George P. Murdock [1]. It has since been refined and updated in various ways, most prominently by Yale University’s HRAF division as the subscription database eHRAF World Cultures [2]. The Museum der Kulturen Basel (MKB), however, uses a distinct instance of OWC that reflects the museum’s collection history, for example by vastly enriching OWC’s ontology with respect to modern Papua New Guinea. In this paper, I will explore whether this local OWC instance (call it OWCM) can be reconciled with the Integrated Authority File (GND) [3] used by the Basel University Library (and all other Swiss German university libraries) for indexing. 
+The Outline of World Cultures (OWC) is an ontology for cultures created by George P. Murdock [1]. It has since been refined and updated in various ways, most prominently by Yale University’s HRAF division as the subscription database eHRAF World Cultures [2]. The Museum der Kulturen Basel (MKB), however, uses a distinct instance of OWC that reflects the museum’s collection history, for example by vastly enriching OWC’s ontology with respect to modern Papua New Guinea. In this working paper, I will explore whether this local OWC instance (call it OWCM) can be reconciled with the Integrated Authority File (GND) [3] used by the Basel University Library (and all other Swiss German university libraries) for indexing. 
 
 ### 2. OWCM input data
 The OWCM data was supplied to me in form of three XLS(X) files. In what follows, I will briefly describe the content and structure of each file:
@@ -50,19 +52,25 @@ The GND provides a LOD API of its data that includes reconciliation for OpenRefi
  
 #### 4.2 Informed reconciliation
 
-`reconciled/owcm_gnd_informed` is still based on the single data field `prefLabel` but limited to the GND datatype `PlaceOrGeographicName` [9]. Recall is lower as compared to `reconciled/owcm_gnd_naive`, but precision is increased.
+`reconciled/owcm_gnd_informed` is still based on the single data field `prefLabel` but limited to the GND datatype `PlaceOrGeographicName` [9]. Recall is lower as compared to `reconciled/owcm_gnd_naive`, namely 731 or 22% automatic matches, but precision is increased. Nevertheless, false positives remain, for example:
+
+- _Historical Puerto Rico_ is matched to GND's _Puerto Rico_; the former refers to the political entity before the twentieth century, the latter to the state founded in 1952. Similar for _Prehistoric South Arabia_ being matched to _South Arabia_, and so on. 
+- _Bombay Tribes_ is matched to the city of _Bombay_. Other cases include _Taichung Peasants_ being matched to the city of _Taichung_, or _West Alaska Eskimo_ being matched to _Alaska (West)_.
+
+Most of these errors seem to be related to the scope of a concept. Perhaps they could be avoided be providing more context; this can be achieved by basing the reconciliation on more than one data field but has the downside of introducing a lot of noise. A more promising but also more technically challenging solution would be to take gather the context by reading out the parent or child concepts.
 
 ### 5. Outlook
 
 So far I have provided the basis of a reconciliation of OWCM SKOS with GND. However, implementing this reconciliation requires further work. There are many errors and any proposed mapping would have to be checked by an expert in the field (I for one lack the domain specific knowledge in many cases). So I propose the following road map to move forwards: 
 
 1. Compile a set of test concepts a with the help of an ethnographer to be used as benchmark.
-2. Systematize the encountered errors.
-3. Get a deeper understanding of the OpenRefine matching scores and check whether they can be adapted to the needs at hand.
-4. See whether triangulation can be used to improve matching quality by employing Cocoda [10].
+2. Systematize the encountered errors and get a deeper understanding of the OpenRefine matching scores in order to check whether they can be adapted to the needs at hand.
+3. See whether triangulation can be used to improve matching quality by employing Cocoda [10].
 
+Finally, in case of a positive result and hence a (partial) reconciliation of OWCM SKOS with GND, this result should again be Skosmos compliant JSON-LD or similar. 
 
 ### 6. References  
+
 [1] Murdock, George P. (1969): _Outline of World Cultures_, 3rd revised edition. New Haven, Conn.: HRAF Press.  
 [2] https://ehrafworldcultures.yale.edu/ehrafe/   
 [3] https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html  
