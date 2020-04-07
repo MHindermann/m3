@@ -6,7 +6,7 @@ _CC BY 4.0_
 
 ### 0. Preamble
 
-This document is best viewed on GitHub at https://github.com/MHindermann/m3. 
+This document is best viewed on GitHub at https://github.com/MHindermann/owc-gnd-reconciliation. 
 
 ### 1. Introduction
 
